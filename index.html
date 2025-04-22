@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futuristic Task Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+</head>
+
+<body class="min-h-screen" onload="loadData()">
+    <!-- Background Elements -->
+    <div class="particles" id="particles"></div>
+    <div class="grid-lines"></div>
+    <div class="hexagon-bg"></div>
+
+    <!-- Main Container -->
+    <div class="container mx-auto px-4 py-8" id="main-container">
+        <!-- Header -->
+        <header class="mb-8 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-2 futuristic-font neon-glow animate__animated animate__fadeIn">
+                NEXUS<span class="text-[var(--accent)]">TASK</span>
+            </h1>
+            <p class="text-lg opacity-70 animate__animated animate__fadeIn animate__delay-1s">
+                Sistema de Gestión de Tareas Avanzado
+            </p>
+        </header>
+
+        <!-- Main Content -->
+        <div class="glass rounded-2xl max-w-4xl mx-auto p-6 animate__animated animate__fadeInUp animate__delay-1s">
+            <!-- Search and Create -->
+            <div class="flex flex-col md:flex-row gap-4 mb-6">
+                <div class="flex-1 relative">
+                    <input id="search-input" type="text" name="search"
+                        class="w-full cyber-input rounded-lg ml-30 typing-cursor" placeholder="Buscar tarea..." />
+                </div>
+                <div>
+                    <label for="task-modal" class="cyber-button flex items-center gap-2 cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Crear Tarea
+                    </label>
+                </div>
+            </div>
+
+            <!-- Task Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="glass-card rounded-lg p-4 text-center">
+                    <h3 class="text-sm opacity-70">Total</h3>
+                    <p class="text-3xl font-bold text-[var(--primary)]" id="total-task">12</p>
+                </div>
+                <div class="glass-card rounded-lg p-4 text-center">
+                    <h3 class="text-sm opacity-70">Pendientes</h3>
+                    <p class="text-3xl font-bold text-[var(--accent)]" id="pending-task">5</p>
+                </div>
+                <div class="glass-card rounded-lg p-4 text-center">
+                    <h3 class="text-sm opacity-70">En Progreso</h3>
+                    <p class="text-3xl font-bold text-[var(--secondary)]" id="inpregress-task">4</p>
+                </div>
+                <div class="glass-card rounded-lg p-4 text-center">
+                    <h3 class="text-sm opacity-70">Completadas</h3>
+                    <p class="text-3xl font-bold text-green-400" id="completed-task">3</p>
+                </div>
+            </div>
+
+            <!-- Task List -->
+            <div id="app" class="h-[60vh] rounded-xl glass neon-box p-5 overflow-y-auto scrollbar-futuristic">
+                <!-- Task items will be loaded here -->
+                <div class="glass-card rounded-lg p-4 mb-4 flex flex-col">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex items-center gap-3">
+                            <div class="task-status"></div>
+                            <h3 class="text-xl font-semibold">Diseñar Interfaz</h3>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="p-2 rounded-full hover:bg-[rgba(0,247,255,0.1)] transition-all">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--primary)]"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                </svg>
+                            </button>
+                            <button class="p-2 rounded-full hover:bg-[rgba(255,0,128,0.1)] transition-all">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--accent)]" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-3">Crear una interfaz futurista con animaciones y efectos visuales
+                        atractivos.</p>
+                    <div class="mt-auto">
+                        <div class="flex justify-between text-xs text-gray-400 mb-1">
+                            <span>Progreso: 75%</span>
+                            <span>Vence: 15/04/2025</span>
+                        </div>
+                        <div class="progress-bar w-full">
+                            <div class="h-full bg-[var(--primary)]" style="width: 75%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-lg p-4 mb-4 flex flex-col">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex items-center gap-3">
+                            <div class="task-status" style="background: var(--secondary);"></div>
+                            <h3 class="text-xl font-semibold">Implementar Backend</h3>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="p-2 rounded-full hover:bg-[rgba(0,247,255,0.1)] transition-all">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--primary)]"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                </svg>
+                            </button>
+                            <button class="p-2 rounded-full hover:bg-[rgba(255,0,128,0.1)] transition-all">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--accent)]" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-3">Desarrollar la lógica del servidor y conectar con la base de datos.
+                    </p>
+                    <div class="mt-auto">
+                        <div class="flex justify-between text-xs text-gray-400 mb-1">
+                            <span>Progreso: 30%</span>
+                            <span>Vence: 20/04/2025</span>
+                        </div>
+                        <div class="progress-bar w-full">
+                            <div class="h-full bg-[var(--secondary)]" style="width: 30%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-lg p-4 mb-4 flex flex-col">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex items-center gap-3">
+                            <div class="task-status" style="background: green;"></div>
+                            <h3 class="text-xl font-semibold">Pruebas de Usuario</h3>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="p-2 rounded-full hover:bg-[rgba(0,247,255,0.1)] transition-all">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--primary)]"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                </svg>
+                            </button>
+                            <button class="p-2 rounded-full hover:bg-[rgba(255,0,128,0.1)] transition-all">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--accent)]" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-3">Realizar pruebas con usuarios reales para validar la experiencia.</p>
+                    <div class="mt-auto">
+                        <div class="flex justify-between text-xs text-gray-400 mb-1">
+                            <span>Progreso: 100%</span>
+                            <span>Completada: 01/04/2025</span>
+                        </div>
+                        <div class="progress-bar w-full">
+                            <div class="h-full bg-green-400" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/Data.js"></script>
+    <script src="./js/modal.js"></script>
+    <script src="./js/utils.js"></script>
+</body>
+
+</html>
