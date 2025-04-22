@@ -1,17 +1,17 @@
 const taskConatiner = document.getElementById("app");
 
 class Task {
-  constructor(name, description, dueDate) {
-    this.id = Math.floor(Math.random() * 10000);
-    this.name = name;
-    this.description = description;
-    this.dueDate = dueDate;
-    this.status = "in-progress";
-    this.progress = Math.floor(Math.random() * 100);
-  }
+    constructor(name, description, dueDate) {
+        this.id = Math.floor(Math.random() * 10000);
+        this.name = name;
+        this.description = description;
+        this.dueDate = dueDate;
+        this.status = "in-progress";
+        this.progress = Math.floor(Math.random() * 100);
+    }
 
-  static buildTaskCard(task) {
-    return `<div class="glass-card rounded-lg p-4 mb-4 flex flex-col">
+    static buildTaskCard(task) {
+        return `<div class="glass-card rounded-lg p-4 mb-4 flex flex-col">
                         <div class="flex justify-between items-start mb-2">
                             <div class="flex items-center gap-3">
                                 <div class="task-status" style="background: ${
@@ -55,32 +55,52 @@ class Task {
                             </div>
                         </div>
                     </div>`;
-  }
+    }
 }
 
 // Lista de tareas mockeadas
 let tasks = taskTitles.map((title, index) => {
-  return new Task(title, taskDescriptions[index], getRandomFutureDate());
+    return new Task(title, taskDescriptions[index], getRandomFutureDate());
 });
 
 function loadData() {
-  // implementar el renderizado de las tareas
+    // implementar el renderizado de las tareas
 }
 
 function postData(event) {
-  event.preventDefault();
+    event.preventDefault();
 
-  try {
-    // Get form data
+    try {
+        // Obtener el formulario y sus campos
+        const form = event.target.closest('form');
+        const taskName = form.querySelector('input[placeholder="Nombre de la Tarea"]').value;
+        const description = form.querySelector('input[placeholder="Descripción"], textarea[placeholder="Descripción"]').value;
+        const dueDate = form.querySelector('input[placeholder="dd/mm/aaaa"]').value;
 
-    saveTask(task);
-    form.reset();
-    const modal = document.getElementById("task-modal");
-    modal.checked = false;
-    showNotification("Tarea añadida correctamente!");
-  } catch (error) {
-    showNotification("Error al añadir la tarea. Inténtalo de nuevo.");
-  }
+        // Validar campos obligatorios
+        if (!taskName.trim()) {
+            throw new Error("El nombre de la tarea es requerido");
+        }
+
+        // Crear objeto task (ajusta según lo que espere saveTask)
+        const task = {
+            title: taskName,
+            description: description,
+            dueDate: dueDate,
+            completed: false
+        };
+        saveTask(task);
+        form.reset();
+
+        // Cerrar modal (ajusta según tu implementación)
+        const modal = document.getElementById("task-modal");
+        modal.checked = false;
+
+        showNotification("Tarea añadida correctamente!");
+    } catch (error) {
+        console.error("Error:", error);
+        showNotification(error.message || "Error al añadir la tarea. Inténtalo de nuevo.");
+    }
 }
 
 /**
@@ -90,16 +110,37 @@ function postData(event) {
  * */
 
 function saveTask(task) {
-  // implementar la creación de la tarea
-  console.log(task);
+    // 1. Obtener las tareas existentes (o inicializar un arreglo vacío si no hay)
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
-  loadData();
+    // 2. Añadir la nueva tarea al arreglo
+    tasks.push(task);
+
+    // 3. Guardar el arreglo actualizado en localStorage (como JSON)
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+
+    // 4. Opcional: Mostrar en consola para depuración
+    console.log('Tarea guardada:', task);
+
+    // 5. Recargar los datos (si loadData() está definido)
+    loadData(); // Asumiendo que esta función actualiza la UI con las tareas
+}
+
+function loadData() {
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    console.log('Tareas cargadas:', tasks);
+    // Aquí iría la lógica para renderizar las tareas en el DOM
+    // Ejemplo:
+    const taskList = document.getElementById('task-list');
+    taskList.innerHTML = tasks.map(task => `
+      <li>${task.title} - ${task.dueDate}</li>
+  `).join('');
 }
 
 function deleteTask(id) {
-  // implementar la eliminación de la tarea
+    // implementar la eliminación de la tarea
 
-  loadData();
+    loadData();
 }
 
 /**
@@ -109,17 +150,126 @@ function deleteTask(id) {
 
 // Aqui implementar la logica para la busqueda de tareas
 document.getElementById("search-input").addEventListener("input", (e) => {
-  e.preventDefault();
-  console.log(e.target.value);
+    e.preventDefault();
+    console.log(e.target.value);
 });
 
+function filterTasks(searchTerm) {
+    // 1. Obtener tareas de localStorage
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+    // 2. Filtrar tareas (busca en título y descripción)
+    const filteredTasks = tasks.filter(task => {
+        const lowerSearchTerm = searchTerm.toLowerCase();
+        return (
+            task.title.toLowerCase().includes(lowerSearchTerm) ||
+            (task.description && task.description.toLowerCase().includes(lowerSearchTerm))
+        );
+    });
+
+    // 3. Mostrar resultados en la UI
+    renderTasks(filteredTasks); // Asume que existe una función `renderTasks`
+}
+
 // Aqui implementar la logica para eliminar tareas
-function handleDeleteTask(id) {}
+function handleDeleteTask(id) {
+    try {
+        // 1. Obtener todas las tareas de localStorage
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+        // 2. Filtrar para excluir la tarea con el ID proporcionado
+        const updatedTasks = tasks.filter(task => task.id !== id);
+
+        // 3. Guardar el arreglo actualizado en localStorage
+        localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+
+        // 4. Actualizar la interfaz (recargar datos)
+        loadData(); // Asume que esta función recarga las tareas en la UI
+
+        // 5. Notificar éxito
+        showNotification('Tarea eliminada correctamente');
+    } catch (error) {
+        console.error('Error al eliminar tarea:', error);
+        showNotification('Error al eliminar la tarea');
+    }
+}
 
 // Aqui implementar la logica de ver la cantidad de tareas
+function getTotalTasks() {
+    // Obtener las tareas de localStorage
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+    // Devolver el número total de tareas
+    return tasks.length;
+}
 
 // Aqui implementar la logica de ver la cantidad de tareas completadas
+function getCompletedTasksCount() {
+    // 1. Obtener todas las tareas de localStorage
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+    // 2. Filtrar solo las tareas completadas y contar
+    return tasks.filter(task => task.completed === true).length;
+}
 
 // Aqui implementar la logica de ver la cantidad de tareas pendientes
+function getPendingTasksCount() {
+    // 1. Obtener todas las tareas de localStorage
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+    // 2. Filtrar tareas no completadas (pendientes)
+    // Asumiendo que una tarea pendiente es aquella con completed: false
+    return tasks.filter(task => task.completed === false).length;
+
+    // Si tienes estado 'en progreso' y quieres excluirlas:
+    // return tasks.filter(task => !task.completed && !task.inProgress).length;
+}
 
 // Aqui implementar la logica de ver la cantidad de tareas en progreso
+class Task {
+    constructor({ title, description, dueDate }) {
+        this.id = Date.now();
+        this.title = title;
+        this.description = description;
+        this.dueDate = dueDate;
+        this.completed = false;
+        this.inProgress = false; // ← Nuevo campo para estado en progreso
+    }
+}
+/*implementacion de busqueda,.........*/
+// Función para filtrar tareas
+function filterTasks(searchTerm) {
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    const filteredTasks = tasks.filter(task => {
+        const searchLower = searchTerm.toLowerCase();
+        return (
+            task.title.toLowerCase().includes(searchLower) ||
+            (task.description && task.description.toLowerCase().includes(searchLower))
+        );
+    });
+    renderTasks(filteredTasks);
+}
+
+// Event listener para la barra de búsqueda
+document.getElementById('search-input').addEventListener('input', (e) => {
+    filterTasks(e.target.value.trim());
+});
+
+// Función para renderizar tareas filtradas
+function renderTasks(tasks) {
+    const taskList = document.getElementById('task-list');
+    taskList.innerHTML = tasks.map(task => `
+      <div class="task-item" data-id="${task.id}">
+          <h3>${task.title}</h3>
+          <p>${task.description || 'Sin descripción'}</p>
+          <small>Fecha: ${task.dueDate}</small>
+          <button onclick="deleteTask('${task.id}')">Eliminar</button>
+          <button onclick="toggleTaskStatus('${task.id}', 'inProgress')">
+              ${task.inProgress ? 'En progreso ✅' : 'Marcar en progreso'}
+          </button>
+          <button onclick="toggleTaskStatus('${task.id}', 'completed')">
+              ${task.completed ? 'Completada ✅' : 'Marcar completada'}
+          </button>
+      </div>
+  `).join('');
+}

@@ -7,6 +7,7 @@
     <title>Futuristic Task Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="min-h-screen" onload="loadData()">
@@ -26,14 +27,39 @@
                 Sistema de Gestión de Tareas Avanzado
             </p>
         </header>
+        <section class="stats-container">
+            <div class="stat-item">
+                <span>Total</span>
+                <span id="total-counter">0</span>
+            </div>
+            <div class="stat-item">
+                <span>Pendientes</span>
+                <span id="pending-counter">0</span>
+            </div>
+            <div class="stat-item">
+                <span>En Progreso</span>
+                <span id="inprogress-counter">0</span>
+            </div>
+            <div class="stat-item">
+                <span>Completadas</span>
+                <span id="completed-counter">0</span>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div id="completed-progress" class="progress-segment" style="width: 0%; background-color: #4CAF50;"></div>
+                    <div id="inprogress-progress" class="progress-segment" style="width: 0%; background-color: #2196F3;"></div>
+                    <div id="pending-progress" class="progress-segment" style="width: 0%; background-color: #FF9800;"></div>
+                </div>
+            </div>
+        </section>
 
         <!-- Main Content -->
         <div class="glass rounded-2xl max-w-4xl mx-auto p-6 animate__animated animate__fadeInUp animate__delay-1s">
             <!-- Search and Create -->
             <div class="flex flex-col md:flex-row gap-4 mb-6">
                 <div class="flex-1 relative">
-                    <input id="search-input" type="text" name="search"
-                        class="w-full cyber-input rounded-lg ml-30 typing-cursor" placeholder="Buscar tarea..." />
+                    <input id="search-input" type="text" name="search" class="w-full cyber-input rounded-lg ml-30 typing-cursor" placeholder="Buscar tarea..." />
                 </div>
                 <div>
                     <label for="task-modal" class="cyber-button flex items-center gap-2 cursor-pointer">
@@ -92,8 +118,8 @@
                             </button>
                         </div>
                     </div>
-                    <p class="text-gray-300 mb-3">Crear una interfaz futurista con animaciones y efectos visuales
-                        atractivos.</p>
+                    <p class="text-gray-300 mb-3">Crear una interfaz futurista con animaciones y efectos visuales atractivos.
+                    </p>
                     <div class="mt-auto">
                         <div class="flex justify-between text-xs text-gray-400 mb-1">
                             <span>Progreso: 75%</span>
